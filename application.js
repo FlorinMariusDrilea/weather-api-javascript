@@ -33,10 +33,17 @@ window.addEventListener('load', ()=> {
 
                     // Formula to change from F to C
                     let farenheit = Math.floor((temperature/5) * 9 + 32);
-                    
+
                     // Set Icon
                     // setIcons(weather_icons, document.querySelector('.icon'));
-                
+                    if(temperature > 25) {
+                        document.body.style.background = "linear-gradient(to right, #f12711, #f5af19)";
+                    } else if(temperature >= 10  && temperature <= 25) {
+                        document.body.style.background = "linear-gradient(to right, #22c1c3, #fdbb2d)";
+                    } else {
+                        document.body.style.background = "llinear-gradient(to right, #43c6ac, #191654)";
+                    }
+
                     // Change temperature to Celsius/F
                     temperatureSection.addEventListener('click', () =>{
                         if(temperatureSpan.textContent === 'C') {
