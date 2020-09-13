@@ -1,40 +1,60 @@
 window.addEventListener('load', ()=> {
-    let longitude;
-    let latitude;
+    let country;
     let temperatureDescription = document.querySelector('.t-description');
     let temperatureDegree = document.querySelector('.t-degree');
-
     let locationTimezone = document.querySelector('.location');
+    let temperatureSection = document.querySelector('.degree-section');
+    const temperatureSpan = document.querySelector('.temperature span');
 
+    const searchbox = document.querySelector('.search-box');
+    searchbox.addEventListener('keypress', setQuery);
 
-    if(navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            console.log(position);
-            longitude = position.coords.longitude;
-            latitude = position.coords.latitude;
+      function setQuery(evt) {
+        if (evt.keyCode == 13) {
+            country = searchbox.value;
+            console.log(country);
+            const api = `http://api.weatherstack.com/current?access_key=8d6499ef522849c7027f39a5f33925a7&query=${country}`;
+            search(api);
+        }
+            
+        function search(api){
+            fetch(api)
+                .then(response =>{
+                    return response.json();
+                })
+                .then(data =>{
+                    console.log(data);
+                    const {temperature, weather_descriptions} = data.current;
+                    const {country, name} = data.location;
+                    temperatureDegree.textContent = temperature;
+                    temperatureDescription.textContent = weather_descriptions;
+                    locationTimezone.textContent = name + ", " + country;
+                    temperatureSpan.textContent = 'C';
 
-            const proxy ="https://cors-anywhere.herokuapp.com/"
-            const api = 'http://api.weatherstack.com/current?access_key=8d6499ef522849c7027f39a5f33925a7&query=longitude,latitude';
-    
-        fetch(api)
-            .then(response =>{
-                return response.json();
-            })
-            .then(data =>{
-                console.log(data);
-                const {temperature, weather_descriptions, weather_icons} = data.current;
-                const {country} = data.location;
-                temperatureDegree.textContent = temperature;
-                temperatureDescription.textContent = weather_descriptions;
-                locationTimezone.textContent = country;
-                // Set Icon
-                setIcons(weather_icons, document.querySelector('.icon'));
-            });
-        });
-    } 
+                    // Formula to change from F to C
+                    let farenheit = Math.floor((temperature/5) * 9 + 32);
+                    
+                    // Set Icon
+                    // setIcons(weather_icons, document.querySelector('.icon'));
+                
+                    // Change temperature to Celsius/F
+                    temperatureSection.addEventListener('click', () =>{
+                        if(temperatureSpan.textContent === 'C') {
+                            temperatureSpan.textContent = 'F';
+                            temperatureDegree.textContent = farenheit;
+                            console.log(temperatureDegree);
+                        } else {
+                            temperatureSpan.textContent = 'C';
+                            temperatureDegree.textContent = temperature;
+                        }
+                    })
+                });
+        }
+}
+
     function setIcons(icon, iconID) {
         const skycons = new Skycons({colors: "white"});
-        const currentIcon = Skycons[icon.replace(/-/g, "_")];
+        const currentIcon = icon.replace(weather, "_").toUpperCase();
         skycons.play();
         return skycons.set(iconID, Skycons[currentIcon]);
     }
