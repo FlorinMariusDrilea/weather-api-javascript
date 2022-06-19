@@ -29,9 +29,9 @@ window.addEventListener('load', ()=> {
                 .then(response =>{
                     return response.json();
                 })
-                .then(data =>{
+                .then(response =>{
                     // get all data from the api
-                    console.log(data);
+                    console.log(response);
                     const {temperature, weather_descriptions} = data.current;
                     const {country, name} = data.location;
                     temperatureDegree.textContent = temperature;
